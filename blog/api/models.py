@@ -3,19 +3,33 @@ from django.db import models
 # Create your models here.
 from django.db import models
 
+
+
+
 class BlogArticle(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100, blank=True, default='')
     body = models.TextField(blank=True, default='')
-    owner = models.ForeignKey('auth.User', related_name='posts', on_delete=models.CASCADE)
+    owner = models.ForeignKey('auth.User', related_name='blogArticles', on_delete=models.CASCADE)
+
 
     class Meta:
         ordering = ['created']
 
-class Tags(models.Model):
-    tagName = models.CharField(max_length=50, blank=True, default='')
 
-class BlogTags(models.Model):
-    blogArticlePK = models.ForeignKey(BlogArticle, on_delete=models.CASCADE)
-    selectedTag = models.ForeignKey(Tags.tagName,on_delete=models.CASCADE)
+class BlogArticleTag(models.Model):
+    tagName = models.CharField(max_length=50, blank=True, default='')
+    blogArticle = models.ForeignKey('BlogArticle', related_name='blogarticletag',on_delete=models.CASCADE)
+
+
+class BlogArticleComment(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    body = models.TextField(blank=True)
+    owner = models.ForeignKey('auth.User', related_name='blogarticlecomments',on_delete=models.CASCADE)
+    blogArticle = models.ForeignKey('BlogArticle',related_name='blogarticlecomments', on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['created']
+
+
 
