@@ -1,7 +1,7 @@
 from rest_framework import generics
 from django.shortcuts import render
 from api import serializers
-from api.models import BlogArticle, BlogArticleComment,BlogArticleTag
+from api.models import BlogArticle, BlogArticleComment,BlogArticleTag, BlogArticleCategory
 from rest_framework import permissions
 
 from django.contrib.auth.models import User
@@ -37,7 +37,7 @@ class BlogArticleCommentList(generics.ListCreateAPIView):
 
 class BlogArticleCommentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = BlogArticleComment.objects.all()
-    serializer_class = serializers.BlogArticleSerializer
+    serializer_class = serializers.BlogArticleCommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class BlogArticleTagList(generics.ListCreateAPIView):
@@ -49,4 +49,18 @@ class BlogArticleTagList(generics.ListCreateAPIView):
 class BlogArticleTagDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = BlogArticleTag.objects.all()
     serializer_class = serializers.BlogArticleTagSerializer
+
+
+class BlogArticleCategoryList(generics.ListCreateAPIView):
+    queryset = BlogArticleCategory.objects.all()
+    serializer_class = serializers.CategorySerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+class BlogArticleCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = BlogArticleCategory.objects.all()
+    serializer_class = serializers.PostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly]
 # Create your views here.

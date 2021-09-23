@@ -31,5 +31,15 @@ class BlogArticleComment(models.Model):
     class Meta:
         ordering = ['created']
 
+class BlogArticleCategory(models.Model):
+    name = models.CharField(max_length=100, blank=False, default="")
+    owner = models.ForeignKey('auth.User', related_name='blogarticlecategory', on_delete=models.CASCADE)
+    blogArticle = models.ManyToManyField('BlogArticle', related_name='blogarticlecategory', blank=True)
+
+    class Meta:
+        verbose_name_plural='Categories'
+        db_table = 'blogarticlecategory'
+        managed=True
+
 
 
