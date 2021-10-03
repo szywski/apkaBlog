@@ -15,9 +15,25 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import permissions
+from rest_framework.swagger.views import get_swagger_view
+
+from drf_yasg import openapi
+schema_view = get_swagger_view(
+    openapi.Info(
+        title="api",
+        default_version='v1',
+        description="blog article api",
+
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
 
 urlpatterns = [
+   path('',schema_view),
     path('admin/', admin.site.urls),
-    path('', include('api.urls')),
+    path('blogapi', include('api.urls')),
     path('api-auth/', include('rest_framework.urls')),
 ]

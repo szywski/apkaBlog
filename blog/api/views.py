@@ -1,10 +1,10 @@
 from rest_framework import generics
-from django.shortcuts import render
 from api import serializers
 from api.models import BlogArticle, BlogArticleComment,BlogArticleTag, BlogArticleCategory
 from rest_framework import permissions
-
 from django.contrib.auth.models import User
+
+
 
 class UserList(generics.ListCreateAPIView):
     queryset = User.objects.all()
@@ -62,5 +62,5 @@ class BlogArticleCategoryList(generics.ListCreateAPIView):
 class BlogArticleCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = BlogArticleCategory.objects.all()
     serializer_class = serializers.PostSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 # Create your views here.
