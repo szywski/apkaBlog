@@ -15,6 +15,7 @@ class BlogArticle(models.Model):
 
     class Meta:
         ordering = ['created']
+        managed = True
 
 
 class BlogArticleTag(models.Model):
@@ -30,6 +31,7 @@ class BlogArticleComment(models.Model):
 
     class Meta:
         ordering = ['created']
+
 
 class BlogArticleCategory(models.Model):
     name = models.CharField(max_length=100, blank=False, default="")

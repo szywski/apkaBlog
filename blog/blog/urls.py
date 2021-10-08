@@ -16,24 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import permissions
-from rest_framework.swagger.views import get_swagger_view
-
+from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-schema_view = get_swagger_view(
+schema_view = get_schema_view(
     openapi.Info(
-        title="api",
+        title="myApi",
         default_version='v1',
-        description="blog article api",
-
+        description="Swagger test impl",
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
-
-
 urlpatterns = [
-   path('',schema_view),
+    path('',schema_view.with_ui('swagger',cache_timeout=0), name='schema-swagger-ui'),
     path('admin/', admin.site.urls),
-    path('blogapi', include('api.urls')),
+    path('api/', include('api.urls')),
     path('api-auth/', include('rest_framework.urls')),
 ]

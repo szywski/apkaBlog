@@ -1,9 +1,11 @@
 from rest_framework import generics
 from api import serializers
 from api.models import BlogArticle, BlogArticleComment,BlogArticleTag, BlogArticleCategory
-from rest_framework import permissions
+from django.contrib.auth import login
 from django.contrib.auth.models import User
-
+from rest_framework import permissions
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from knox.views import LoginView as KnoxLoginView
 
 
 class UserList(generics.ListCreateAPIView):
@@ -43,6 +45,8 @@ class BlogArticleCommentDetail(generics.RetrieveUpdateDestroyAPIView):
 class BlogArticleTagList(generics.ListCreateAPIView):
     queryset = BlogArticleTag.objects.all()
     serializer_class = serializers.BlogArticleTagSerializer
+    filterset_fileds = ('blogArticle',)
+
     def perform_create(self, serializer):
         serializer.save()
 
@@ -53,7 +57,7 @@ class BlogArticleTagDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class BlogArticleCategoryList(generics.ListCreateAPIView):
     queryset = BlogArticleCategory.objects.all()
-    serializer_class = serializers.CategorySerializer
+    serializer_class = serializers.BlogArticleCategorySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
@@ -61,6 +65,24 @@ class BlogArticleCategoryList(generics.ListCreateAPIView):
 
 class BlogArticleCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = BlogArticleCategory.objects.all()
-    serializer_class = serializers.PostSerializer
+    serializer_class = serializers.BlogArticleCategorySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-# Create your views here.
+
+class UserCreate(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = serializers.UserSerializer
+    permission_classes = [permissions.AllowAny]
+
+class LoginAPI(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_user_serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        login(request, user)
+        return super(LoginAPI, self).post(request, format=None)
+
+
+
